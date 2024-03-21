@@ -12,6 +12,18 @@ Los requisitos del proyecto son los siguientes:
 
 ![Requisitos](./screenshots/requisitos.webp)
 
+El proyecto presenta las siguientes funcionalidades:
+
+| Funcionalidades                                                           |
+| ------------------------------------------------------------------------- |
+| Crear archivo .txt                                                        |
+| Leer contenido de archivos .txt                                           |
+| Renombrar archivos                                                        |
+| Eliminar archivos                                                         |
+| No permitir crear archivos con nombre identico                            |
+| Mostrar nombre de archivos y extensión en select                          |
+| Mostrar alertas de acción exitosa al crear, renombrar y eliminar archivos |
+
 A continuación explico cada una de mis soluciones a cada requerimiento incluso los requerimientos opcionales:
 
 ## 1. Disponibilizar una ruta para crear un archivo a partir de los parámetros de la consulta recibida (2 Puntos)
