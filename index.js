@@ -2,7 +2,7 @@ const express = require("express");
 
 const app = express();
 const exphbs = require("express-handlebars");
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 const rutas = require("./routes");
 
@@ -31,3 +31,4 @@ app.listen(PORT, () => {
 });
 
 app.use("/", rutas);
+module.exports = app;
