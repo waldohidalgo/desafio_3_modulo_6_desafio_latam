@@ -17,7 +17,9 @@ router.use((req, res, next) => {
       res.status(500).send("Error interno del servidor");
     }
 
-    res.locals.archivos = archivos;
+    res.locals.archivos = archivos.filter(
+      (archivo) => !archivo.startsWith(".")
+    );
     next();
   });
 });
