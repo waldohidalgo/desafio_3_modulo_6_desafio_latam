@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
+const path = require("path");
 router.use(
   "/bootstrap_css",
   express.static("./node_modules/bootstrap/dist/css")
@@ -10,9 +11,7 @@ router.use("/jquery", express.static("./node_modules/jquery/dist"));
 router.use("/public", express.static("./public"));
 
 router.use((req, res, next) => {
-  const directorio = "/archivos";
-
-  fs.readdir(__dirname + directorio, (err, archivos) => {
+  fs.readdir(path.join(__dirname, "archivos"), (err, archivos) => {
     if (err) {
       console.error("Error al leer el directorio:", err);
       res.status(500).send("Error interno del servidor");
@@ -35,7 +34,7 @@ router.get("/crear", (req, res) => {
 
   res.locals.archivos.push({ archivo, contenido });
   fs.writeFile(
-    __dirname + `archivos/${archivo}.txt`,
+    path.join(__dirname, `archivos/${archivo}.txt`),
     contenido,
     "utf8",
     (err) => {
@@ -54,17 +53,21 @@ router.get("/crear", (req, res) => {
 router.get("/leer", (req, res) => {
   const { archivo } = req.query;
 
-  fs.readFile(__dirname + `archivos/${archivo}`, "utf8", (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Error al leer el archivo");
-    } else {
-      res.render("contenido", {
-        archivo,
-        data: `${obtenerFechaFormateada()}-${data}`,
-      });
+  fs.readFile(
+    path.join(__dirname, `archivos/${archivo}`),
+    "utf8",
+    (err, data) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error al leer el archivo");
+      } else {
+        res.render("contenido", {
+          archivo,
+          data: `${obtenerFechaFormateada()}-${data}`,
+        });
+      }
     }
-  });
+  );
 });
 
 function obtenerFechaFormateada() {
@@ -82,8 +85,8 @@ router.get("/renombrar", (req, res) => {
   const { nombre_seleccionado, nombre_nuevo } = req.query;
 
   fs.rename(
-    __dirname + `archivos/${nombre_seleccionado}`,
-    __dirname + `archivos/${nombre_nuevo}.txt`,
+    path.join(__dirname, `archivos/${nombre_seleccionado}`),
+    path.join(__dirname, `archivos/${nombre_nuevo}.txt`),
     (err, data) => {
       if (err) {
         console.error(err);
@@ -102,7 +105,7 @@ router.get("/renombrar", (req, res) => {
 router.get("/eliminar", (req, res) => {
   const { nombre_archivo } = req.query;
 
-  fs.unlink(__dirname + `archivos/${nombre_archivo}`, (err) => {
+  fs.unlink(path.join(__dirname, `archivos/${nombre_archivo}`), (err) => {
     if (err) {
       console.error("Error al eliminar el archivo:", err);
       res.status(500).send("Error al renombrar el archivo");
