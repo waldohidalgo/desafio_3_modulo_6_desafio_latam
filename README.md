@@ -17,12 +17,14 @@ El proyecto presenta las siguientes funcionalidades:
 | Funcionalidades                                                           |
 | ------------------------------------------------------------------------- |
 | Crear archivo .txt                                                        |
-| Leer contenido de archivos .txt                                           |
+| **Leer contenido de archivos .txt**                                       |
 | Renombrar archivos                                                        |
-| Eliminar archivos                                                         |
+| **Eliminar archivos**                                                     |
 | No permitir crear archivos con nombre identico                            |
-| Mostrar nombre de archivos y extensión en select                          |
+| **Mostrar nombre de archivos y extensión en select**                      |
 | Mostrar alertas de acción exitosa al crear, renombrar y eliminar archivos |
+| **Eliminación cada 5 minutos de todos los archivos en la carpeta**        |
+| Validación de campos vacíos en formularios                                |
 
 A continuación explico cada una de mis soluciones a cada requerimiento incluso los requerimientos opcionales:
 
@@ -377,3 +379,37 @@ formularioRenombrar.on("submit", function (e) {
     });
 });
 ```
+
+## ¡¡EXTRA!!: Borrar cada 5 minutos todos los archivos creados
+
+Considerando que se trabaja con selects que muestran nombres escritos a público de todo tipo, implemento la **eliminación de todos los archivos creados** cada 5 minutos utilizando el siguiente código:
+
+```js
+function eliminarArchivosDeCarpeta() {
+  const carpeta = path.join(__dirname, "archivos");
+  fs.readdir(carpeta, (err, archivos) => {
+    if (err) {
+      console.error("Error al leer el directorio:", err);
+      return;
+    }
+
+    archivos.forEach((archivo) => {
+      const rutaArchivo = path.join(carpeta, archivo);
+
+      fs.unlink(rutaArchivo, (err) => {
+        if (err) {
+          console.error("Error al eliminar el archivo:", err);
+        } else {
+          console.log("Archivo eliminado:", rutaArchivo);
+        }
+      });
+    });
+  });
+}
+
+setInterval(eliminarArchivosDeCarpeta, 5 * 60 * 1000);
+
+eliminarArchivosDeCarpeta();
+```
+
+Por tanto, indiferente del nombre y contenido de archivos que sean creados, cada 5 minutos **TODO** es eliminado.

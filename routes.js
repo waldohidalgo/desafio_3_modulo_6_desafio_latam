@@ -117,4 +117,30 @@ router.get("/eliminar", (req, res) => {
   });
 });
 
+function eliminarArchivosDeCarpeta() {
+  const carpeta = path.join(__dirname, "archivos");
+  fs.readdir(carpeta, (err, archivos) => {
+    if (err) {
+      console.error("Error al leer el directorio:", err);
+      return;
+    }
+
+    archivos.forEach((archivo) => {
+      const rutaArchivo = path.join(carpeta, archivo);
+
+      fs.unlink(rutaArchivo, (err) => {
+        if (err) {
+          console.error("Error al eliminar el archivo:", err);
+        } else {
+          console.log("Archivo eliminado:", rutaArchivo);
+        }
+      });
+    });
+  });
+}
+
+setInterval(eliminarArchivosDeCarpeta, 5 * 60 * 1000);
+
+eliminarArchivosDeCarpeta();
+
 module.exports = router;
