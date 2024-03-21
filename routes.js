@@ -10,19 +10,9 @@ router.use("/jquery", express.static("./node_modules/jquery/dist"));
 router.use("/public", express.static("./public"));
 
 router.use((req, res, next) => {
-  const directorio = "archivos";
-  fs.chmod(directorio, 0o777, (err) => {
-    if (err) {
-      console.error("Error al establecer los permisos:", err);
-      res.status(500).send("Error al establecer permisos");
-    }
+  const directorio = "/archivos";
 
-    console.log(
-      "Permisos establecidos correctamente en el directorio:",
-      directorio
-    );
-  });
-  fs.readdir(directorio, (err, archivos) => {
+  fs.readdir(__dirname + directorio, (err, archivos) => {
     if (err) {
       console.error("Error al leer el directorio:", err);
       res.status(500).send("Error interno del servidor");
@@ -44,22 +34,27 @@ router.get("/crear", (req, res) => {
   const { archivo, contenido } = req.query;
 
   res.locals.archivos.push({ archivo, contenido });
-  fs.writeFile(`archivos/${archivo}.txt`, contenido, "utf8", (err) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Error al crear el archivo");
-    } else {
-      console.log("Archivo creado correctamente");
-      res.locals.archivos.push({ archivo, contenido });
-      res.status(200).send("Archivo creado correctamente");
+  fs.writeFile(
+    __dirname + `archivos/${archivo}.txt`,
+    contenido,
+    "utf8",
+    (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error al crear el archivo");
+      } else {
+        console.log("Archivo creado correctamente");
+        res.locals.archivos.push({ archivo, contenido });
+        res.status(200).send("Archivo creado correctamente");
+      }
     }
-  });
+  );
 });
 
 router.get("/leer", (req, res) => {
   const { archivo } = req.query;
 
-  fs.readFile(`archivos/${archivo}`, "utf8", (err, data) => {
+  fs.readFile(__dirname + `archivos/${archivo}`, "utf8", (err, data) => {
     if (err) {
       console.error(err);
       res.status(500).send("Error al leer el archivo");
@@ -87,8 +82,8 @@ router.get("/renombrar", (req, res) => {
   const { nombre_seleccionado, nombre_nuevo } = req.query;
 
   fs.rename(
-    `archivos/${nombre_seleccionado}`,
-    `archivos/${nombre_nuevo}.txt`,
+    __dirname + `archivos/${nombre_seleccionado}`,
+    __dirname + `archivos/${nombre_nuevo}.txt`,
     (err, data) => {
       if (err) {
         console.error(err);
@@ -107,7 +102,7 @@ router.get("/renombrar", (req, res) => {
 router.get("/eliminar", (req, res) => {
   const { nombre_archivo } = req.query;
 
-  fs.unlink(`archivos/${nombre_archivo}`, (err) => {
+  fs.unlink(__dirname + `archivos/${nombre_archivo}`, (err) => {
     if (err) {
       console.error("Error al eliminar el archivo:", err);
       res.status(500).send("Error al renombrar el archivo");
